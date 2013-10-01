@@ -8,6 +8,9 @@ To use:
 2. Create SQLScript procedures from fill_table_mandlebrotPoints.procedure and single_point.procedure.
 3. Fill table with sample data by calling sql_fill_table.sql.
 4. Monitor fill progress by calling sql_fill_table_progress_monitor.sql.
+5. Activate OData service mandlebrotPointsTable.xsodata.
+
+You will need to adjust schema and repository workspace names to suit your system. 
 
 Note on shared constant for iteration count
 -------------------------------------------

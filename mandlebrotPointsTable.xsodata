@@ -1,0 +1,5 @@
+service namespace "workshop.sessiona.k00"
+{ 
+   "workshop.sessiona.k00.dataMandle::mandlebrotPoints" as "MANDLEBROT";       
+}
+ 
