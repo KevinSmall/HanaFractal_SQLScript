@@ -1,0 +1,65 @@
+CREATE PROCEDURE fill_table_mandlebrotPoints 
+(
+  in Resolution integer,
+  in StartX integer,
+  in FinishX integer,
+  in StartY integer,
+  in FinishY integer,
+  in DeleteExistingResolution tinyint
+) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	AS           
+/*
+Inserts entries into table mandlebrotPoints.
+
+StartX,Y and FinishX,Y are points in mandlebrot space expressed as an integer.
+Each integer represents a distance of "1 / Resolution" in mandlebrot space.
+For example StartX = 200 with Resolution = 100 = 2.0f in mandlebrot space, and
+StartX = 200 with Resolution = 200 = 1.0f in mandlebrot space. 
+
+Resolution is the number of points that will be inserted per unit of mandlebrot space.
+So eg StartX = -1000, FinishX = -500, Resolution = 1000 would create 500 points along the x axis, 
+running from -1.0f to -0.5f in mandlebrot space.
+
+DeleteExistingResolution is a flag 0 or 1, if it is 1 then any existing records
+with the same Resolution are deleted.
+*/
+BEGIN
+
+declare indexX integer;
+declare indexY integer;
+declare x decimal(10, 7);
+declare y decimal(10, 7);
+declare esc integer;
+declare batchCounter integer;
+declare maxCounter integer;
+
+-- Trash any previously created points, but only for the same resolution
+IF :DeleteExistingResolution = 1 THEN
+  delete from "WORKSHOPA_K00"."workshop.sessiona.k00.dataMandle::mandlebrotPoints" as a
+         where a."Resolution" = :Resolution
+         and ( a."XCoord" >= 0 or a."XCoord" < 0 );
+END IF;
+
+-- Create new records
+batchCounter := 0;
+maxCounter := (:FinishX - :StartX ) * (:FinishY - :StartY);
+
+FOR indexX IN :StartX .. :FinishX DO 
+  FOR indexY IN :StartY .. :FinishY DO
+    x := indexX / Resolution;
+    y := indexY / Resolution;
+    -- Work out the escaped value given a point in mandlebrot space
+    call "_SYS_BIC"."workshop.sessiona.k00.models/single_point"( :x, :y, :esc );
+    insert into "WORKSHOPA_K00"."workshop.sessiona.k00.dataMandle::mandlebrotPoints"
+           values(Resolution, indexX, indexY, esc);
+    batchCounter := batchCounter + 1;           
+    -- Monitoring via m_session_context (Credit to Lars Breddemann)
+      IF MOD(batchCounter, 1000) = 0 THEN
+        EXEC 'set session ''BUILD_MANDLEBROT_TABLE_PROGRESS'' = '''||:batchCounter||' of '|| :maxCounter || ''' ';
+      END IF;
+  END FOR;
+END FOR;
+
+END;

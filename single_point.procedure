@@ -1,0 +1,34 @@
+CREATE PROCEDURE single_point 
+(
+  in xcoord decimal(10, 7),
+  in ycoord decimal(10, 7),
+  out escaped integer
+) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	READS SQL DATA AS     
+/*
+Work out the escaped value given a point in mandlebrot space
+*/
+BEGIN
+
+  declare x0  decimal(10, 7) := xcoord;
+  declare y0  decimal(10, 7) := ycoord;
+  declare x  decimal(10, 7) := 0;
+  declare y  decimal(10, 7) := 0;
+
+  declare iteration  decimal(10, 7) := 0;
+  declare max_iteration decimal(10, 7) := 1000;
+  
+  declare xtemp decimal(10, 7) := 0;
+  
+  while ((x*x + y*y < 2*2) and ( iteration < max_iteration )) do   
+    xtemp := ( x*x ) - ( y*y ) + x0;
+    y := 2*x*y + y0;
+    x := xtemp;
+    iteration := iteration + 1;
+  end while;
+  
+  escaped := iteration;
+ 
+END;
