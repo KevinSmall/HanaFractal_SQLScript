@@ -2,9 +2,9 @@ table.schemaName = "WORKSHOPA_K00";
 table.tableType = COLUMNSTORE;  
 table.description = "Mandlebrot Set Points";
 table.columns = [ 
-	{name = "Resolution"; sqlType = INTEGER; nullable = false;   comment = "Resolution of X Y coords"; },
-	{name = "XCoord"; sqlType = INTEGER; nullable = false; comment = "X Coord expressed in nth Resolution"; },
-	{name = "YCoord"; sqlType = INTEGER; nullable = false; comment = "Y Coord expressed in nth Resolution"; },
+	{name = "Resolution"; sqlType = INTEGER; nullable = false;   comment = "Resolution of X Y coords, equivalent of DPI"; },
+	{name = "XCoord"; sqlType = INTEGER; nullable = false; comment = "X Coord expressed in Resolution units"; },
+	{name = "YCoord"; sqlType = INTEGER; nullable = false; comment = "Y Coord expressed in Resolution units"; },
 	{name = "Escaped"; sqlType = INTEGER; nullable = true; comment = "Escaped result"; }	
  ];			
 table.primaryKey.pkcolumns = ["Resolution", "XCoord", "YCoord"];

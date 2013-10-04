@@ -11,19 +11,22 @@ CREATE PROCEDURE fill_table_mandlebrotPoints
 	SQL SECURITY INVOKER 
 	AS           
 /*
-Inserts entries into table mandlebrotPoints.
+Inserts entries into table mandlebrotPoints. Parameters are:
 
-StartX,Y and FinishX,Y are points in mandlebrot space expressed as an integer.
+- StartX,Y and FinishX,Y
+These are points in mandlebrot space expressed as an integer.
 Each integer represents a distance of "1 / Resolution" in mandlebrot space.
 For example StartX = 200 with Resolution = 100 = 2.0f in mandlebrot space, and
 StartX = 200 with Resolution = 200 = 1.0f in mandlebrot space. 
 
-Resolution is the number of points that will be inserted per unit of mandlebrot space.
+- Resolution
+Is the number of points that will be inserted per unit of mandlebrot space.  Think of 
+this like a DPI dots per inch setting, except it controls "dots per unit of mandlebrot space".
 So eg StartX = -1000, FinishX = -500, Resolution = 1000 would create 500 points along the x axis, 
 running from -1.0f to -0.5f in mandlebrot space.
 
-DeleteExistingResolution is a flag 0 or 1, if it is 1 then any existing records
-with the same Resolution are deleted.
+- DeleteExistingResolution
+Is a flag 0 or 1, if it is 1 then any existing records with the same Resolution are deleted.
 */
 BEGIN
 
